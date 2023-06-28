@@ -1,0 +1,11 @@
+version: "3.8"
+services:
+  calendarlistbot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: calendarlistbot
+    restart: always
+    volumes:
+      - /opt/telegrambots/calendarlistbot/Data:/app/Data
+    command: dotnet CalendarListBot.dll
