@@ -397,6 +397,5 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 
-# Custom directories and bin
+# Custom directories
 /Data/
-/bin/
