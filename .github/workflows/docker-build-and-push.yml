@@ -3,7 +3,7 @@ name: Build and Push Docker Image
 on:
   push:
     branches:
-      - 'main'  # adjust this if your primary branch is 'master'
+      - 'master'
 
 jobs:
   docker:
