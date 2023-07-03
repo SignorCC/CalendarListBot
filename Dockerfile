@@ -17,6 +17,11 @@ RUN dotnet publish -c Release -o out
 # Use a lighter base image for the runtime
 FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS runtime
 
+# Install ffmpeg
+RUN apt-get update && \
+    apt-get install -y ffmpeg && \
+    rm -rf /var/lib/apt/lists/*
+
 # Set the working directory in the container
 WORKDIR /app
 
