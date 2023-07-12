@@ -99,6 +99,10 @@ namespace CalendarListBot
             {
                 Event e = events[i];
 
+                // catch all for undeleted, expired events after a day
+                if (e.dateTime.AddDays(1) < DateTime.Now && e.eventType == EventType.Once)
+                    e.setDeleted();
+
                 if (e.isDeleted)
                     events.RemoveAt(i);
             }

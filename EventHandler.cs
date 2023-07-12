@@ -539,13 +539,14 @@ namespace CalendarListBot
 
             if (e.eventType == EventType.Once)
             {
-                e.setDeleted();
 
                 users
                     .SelectMany(user => user.GetEvents())
-                    .Where(filter => filter == e)
+                    .Where(filter => filter.dateTime == e.dateTime && filter.title == e.title)
                     .ToList()
-                .ForEach(e => e.setDeleted());
+                    .ForEach(e => e.setDeleted());
+
+                e.setDeleted();
 
                 users.Find(user => user.id == e.userID).Clean();
             }

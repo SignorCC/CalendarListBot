@@ -447,6 +447,9 @@ namespace CalendarListBot
                             newTodo.Remove(s);
 
                     DataIO.SaveToFile(filePath, newTodo);
+
+                    // remove deleted events from user
+                    user.Clean();
                 }
             }         
                 

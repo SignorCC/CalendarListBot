@@ -202,6 +202,9 @@ namespace CalendarListBot
             
             entry += $" {message}\n";
 
+            // write log to console (logs in docker)
+            Console.WriteLine(entry);
+
             // write log entry to file
             using (StreamWriter sw = File.AppendText(logFilePath))
             {
