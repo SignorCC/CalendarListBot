@@ -477,9 +477,17 @@ namespace CalendarListBot
                 
                 Task typingIndicator = bot.SendTypingIndicator(cts.Token, user);
 
+                // Handle Voice Messages
+                string fileId;
+                if (update.Message.Voice != null)
+                    fileId = update.Message.Voice.FileId;
+
+                // Assume Audio File
+                else
+                    fileId = update.Message.Audio.FileId;
+
                 using (FileStream filestream = System.IO.File.Create(path))
                 {
-                    string fileId = update.Message.Voice.FileId;
                     var file = await bot.botClient.GetFileAsync(fileId);
                     await bot.botClient.DownloadFileAsync(file.FilePath, filestream);
                     await filestream.FlushAsync();

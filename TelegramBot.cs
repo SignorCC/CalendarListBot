@@ -103,8 +103,8 @@ namespace CalendarListBot
             User user = this.users.FirstOrDefault(u => u.id == update.Message.Chat.Id);
 
             // Now pass to other Handlers
-            // Handle Voice Messages
-            if (update.Message.Voice != null)
+            // Handle Voice and Audio Messages
+            if (update.Message.Voice != null || update.Message.Audio != null)
                 await BotCommands.ReceivedVoice(user, update, this);
 
             if (update.Message.Text == null)
