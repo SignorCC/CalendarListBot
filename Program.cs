@@ -1,13 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Telegram.Bot;
-using Telegram.Bot.Exceptions;
-using Telegram.Bot.Polling;
-using Telegram.Bot.Types;
-using Telegram.Bot.Types.Enums;
+﻿using Telegram.Bot;
+
 
 namespace CalendarListBot
 {
@@ -15,15 +7,14 @@ namespace CalendarListBot
     {
         // define Bot
         public static TelegramBot Bot;
-        static SemaphoreSlim semaphore = new SemaphoreSlim(1, 1); // Limit concurrent access to the Update method
+        //static SemaphoreSlim semaphore = new SemaphoreSlim(1, 1); // Limit concurrent access to the Update method
+        private static int? lastCheckedMinute = null;
 
         static async Task Main(string[] args)
         {
             // define variables
 
             string ?token = null;
-
-            Console.WriteLine(DataIO.GetFilePath("settings.json"));
 
             Dictionary<string, string>? settings = DataIO.LoadSettings(DataIO.GetFilePath("settings.json"));
             
@@ -49,16 +40,23 @@ namespace CalendarListBot
 
             Console.WriteLine($"Start listening for @{me.Username}");
 
+
             // timer logic
+            /*
             DateTime now = DateTime.Now;
             DateTime nextMinute = now.AddMinutes(1).AddSeconds(-now.Second).AddMilliseconds(-now.Millisecond);
             TimeSpan initialDelay = nextMinute - now;
 
             // timer triggers at every full minute
             Timer timer = new Timer(state => Task.Run(UpdateAsync), null, initialDelay, TimeSpan.FromMinutes(1));
+            */
+            System.Timers.Timer timer = new System.Timers.Timer(30000); // 30 seconds interval
+            timer.Elapsed += TimerElapsed;
+            timer.AutoReset = true; // Ensures timer restarts after each elapsed event
+            timer.Start();
 
             // As long as Bot doesn't kill itself, keep task alive
-            while(Bot.run)
+            while (Bot.run)
             {
                 await Task.Delay(100);
 
@@ -76,7 +74,7 @@ namespace CalendarListBot
             cts.Cancel();
 
         }
-
+        /*
         private static async Task UpdateAsync()
         {
             // Ensure only one instance of the Update method runs at a time
@@ -93,6 +91,22 @@ namespace CalendarListBot
                 semaphore.Release();
             }
         }
-        
+        */
+        private static async void TimerElapsed(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            int currentMinute = DateTime.Now.Minute;
+
+            if (lastCheckedMinute == null)
+            {
+                lastCheckedMinute = currentMinute;
+                return; // Skip the first run, only initializing the lastCheckedMinute
+            }
+
+            if (currentMinute != lastCheckedMinute.Value)
+            {
+                await Bot.MinutePassed();
+                lastCheckedMinute = currentMinute;
+            }
+        }
     }
 }
