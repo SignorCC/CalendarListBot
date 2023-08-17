@@ -5,22 +5,20 @@ namespace CalendarListBot
 {
     class Program
     {
-        // define Bot
+        // Constants
         public static TelegramBot Bot;
-        //static SemaphoreSlim semaphore = new SemaphoreSlim(1, 1); // Limit concurrent access to the Update method
         private static int? lastCheckedMinute = null;
 
         static async Task Main(string[] args)
         {
-            // define variables
-
+            // Define variables
             string ?token = null;
 
             Dictionary<string, string>? settings = DataIO.LoadSettings(DataIO.GetFilePath("settings.json"));
             
             DataIO.Log("Booting Up");
 
-            // error handling
+            // Error handling
             if(settings != null)
                 settings.TryGetValue("Token", out token);
 
@@ -30,7 +28,7 @@ namespace CalendarListBot
                 Environment.Exit(1);
             }
 
-            // instaniate Bot and start it
+            // Instaniate Bot and start it
             Bot = new TelegramBot(token);
             CancellationTokenSource cts = new();
 
@@ -41,18 +39,18 @@ namespace CalendarListBot
             Console.WriteLine($"Start listening for @{me.Username}");
 
 
-            // timer logic
-            /*
+            // Timer logic
             DateTime now = DateTime.Now;
-            DateTime nextMinute = now.AddMinutes(1).AddSeconds(-now.Second).AddMilliseconds(-now.Millisecond);
-            TimeSpan initialDelay = nextMinute - now;
+            int secondsUntilNextTenSeconds = 10 - (now.Second % 10);
+            int millisecondsUntilNextTenSeconds = secondsUntilNextTenSeconds * 1000 - now.Millisecond;
 
-            // timer triggers at every full minute
-            Timer timer = new Timer(state => Task.Run(UpdateAsync), null, initialDelay, TimeSpan.FromMinutes(1));
-            */
-            System.Timers.Timer timer = new System.Timers.Timer(30000); // 30 seconds interval
-            timer.Elapsed += TimerElapsed;
-            timer.AutoReset = true; // Ensures timer restarts after each elapsed event
+            System.Timers.Timer timer = new System.Timers.Timer(millisecondsUntilNextTenSeconds);
+            timer.Elapsed += (sender, e) =>
+            {
+                TimerElapsed(sender, e);
+                timer.Interval = 10000; // Reset to 10 seconds after the first trigger
+            };
+            timer.AutoReset = true;
             timer.Start();
 
             // As long as Bot doesn't kill itself, keep task alive
@@ -74,24 +72,7 @@ namespace CalendarListBot
             cts.Cancel();
 
         }
-        /*
-        private static async Task UpdateAsync()
-        {
-            // Ensure only one instance of the Update method runs at a time
-            await semaphore.WaitAsync();
 
-            try
-            {
-                // Your existing Update method logic goes here
-                await Bot.MinutePassed();
-            }
-
-            finally
-            {
-                semaphore.Release();
-            }
-        }
-        */
         private static async void TimerElapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
             int currentMinute = DateTime.Now.Minute;
