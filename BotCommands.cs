@@ -318,13 +318,12 @@ namespace CalendarListBot
             {
                 user.SetLastCommand("/chat");
                 
-                // Access to the GPT4 models is currently unavailable
                 List<string> s = new();
                 s.Add("Davinci");
                 s.Add("Curie");
                 s.Add("ChatGPT");
-                //s.Add("GPT4");
-                //s.Add("GPT4-32K");
+                s.Add("GPT4");
+                s.Add("GPT4-32K");
 
                 user.SetLastInlineMessage(await bot.botClient.SendTextMessageAsync(user.id, DataIO.GetMessage("ModelToUse"), replyMarkup: MessageBuilder.GenerateInlineKeyboardCallbackVertical(s,"/chatModel")));
             }
@@ -382,6 +381,12 @@ namespace CalendarListBot
 
                     else if (modelToUse == "gpt-3.5-turbo")
                         total += user.aiSettings.tokenCount * 0.002 / 1000;
+
+                    else if (modelToUse == "gpt-4")
+                        total += user.aiSettings.tokenCount * 0.045 / 1000;
+
+                    else if (modelToUse == "gpt-4-32k")
+                        total += user.aiSettings.tokenCount * 0.09 / 1000;
 
                     // finally send the strings
                     foreach (string substring in substrings)
@@ -560,12 +565,6 @@ namespace CalendarListBot
                 DataIO.DeleteFileIfExists(path + ".mp3");
                 cts.Cancel();
             }
-
-            
-
-
-
-
 
         }
     }
