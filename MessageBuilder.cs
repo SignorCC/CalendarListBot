@@ -29,7 +29,7 @@ namespace CalendarListBot
             if (length <= maxlength)
             {
                 if (pre)
-                    return $"<code>{indentation}</code>{toCut}";
+                    return $"<pre>{indentation}</pre>{toCut}";
                 else
                     return $"{indentation}{toCut}";
             }
@@ -63,7 +63,7 @@ namespace CalendarListBot
                         if(i == lines.Length - 1)
                         {
                             if (pre)
-                                builder.Append($"<code>{indentation}</code>{line}");
+                                builder.Append($"<pre>{indentation}</pre>{line}");
 
                             else
                                 builder.Append($"{indentation}{line}");
@@ -72,7 +72,7 @@ namespace CalendarListBot
                         else
                         {
                             if (pre)
-                                builder.AppendLine($"<code>{indentation}</code>{line}");
+                                builder.AppendLine($"<pre>{indentation}</pre>{line}");
 
                             else
                                 builder.AppendLine($"{indentation}{line}");
@@ -97,7 +97,7 @@ namespace CalendarListBot
 
                 // The pre tag tells telegram to keep whitespacing consistent when using markdown
                 if(pre)
-                    builder.Append($"<code>{indentation}</code>").AppendLine(substring);
+                    builder.Append($"<pre>{indentation}</pre>").AppendLine(substring);
 
                 else
                     builder.Append(indentation).AppendLine(substring);
@@ -127,9 +127,9 @@ namespace CalendarListBot
                     dayOfWeek = events.First().dateTime.ToString("dddd", new CultureInfo("de-DE"));
 
                 int middleIndex = Head.Length / 2;
-                Head = Head.Insert(middleIndex, $"</code><b><u>{dayOfWeek}</u></b><code>");
+                Head = Head.Insert(middleIndex, $"</pre><b><u>{dayOfWeek}</u></b><pre>");
                 Head = Head.Substring(0, Head.Length - dayOfWeek.Length);
-                Head = $"<code>{Head}</code>";
+                Head = $"<pre>{Head}</pre>";
                 builder.AppendLine(Head);
             }
             
@@ -183,9 +183,9 @@ namespace CalendarListBot
             string Head = line.Replace("_", " ").Substring(0, 26);
             
             int middleIndex = Head.Length / 2;
-            Head = Head.Insert(middleIndex, $"</code><b><u>{title}</u></b><code>");
+            Head = Head.Insert(middleIndex, $"</pre><b><u>{title}</u></b><pre>");
             Head = Head.Substring(0, Head.Length - title.Length);
-            Head = $"<code>{Head}</code>";
+            Head = $"<pre>{Head}</pre>";
             
             builder.Append(Head);
             builder.AppendLine(line);
